@@ -1,21 +1,11 @@
 import io.restassured.RestAssured;
-import io.restassured.config.HeaderConfig;
-import io.restassured.config.JsonConfig;
 import io.restassured.config.LogConfig;
 import io.restassured.config.SSLConfig;
-import io.restassured.filter.Filter;
-import io.restassured.filter.log.ErrorLoggingFilter;
-import io.restassured.filter.log.RequestLoggingFilter;
-import io.restassured.filter.log.ResponseLoggingFilter;
 import io.restassured.http.ContentType;
-import io.restassured.http.Header;
 import io.restassured.parsing.Parser;
 import io.restassured.specification.ProxySpecification;
 import io.restassured.specification.RequestSpecification;
 import io.restassured.specification.ResponseSpecification;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class RestAssuredGlobalDecelerations {
 // This file consists of how to declare global constants in Rest Assured.
