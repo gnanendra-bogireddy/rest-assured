@@ -1,8 +1,12 @@
 package specification;
 
 import io.restassured.RestAssured;
+import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.http.ContentType;
 import io.restassured.specification.ResponseSpecification;
+
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 
 public class ResponseSpecificationDemo {
     // Instead of having to duplicate response expectations for
@@ -31,5 +35,20 @@ public class ResponseSpecificationDemo {
         RestAssured.given()
                 .auth().none().patch("/patch")
                 .then().spec(responseSpecification);
+
+        // We can build ResponseSpecBuilder by using the below code also.
+
+        ResponseSpecBuilder builder = new ResponseSpecBuilder();
+        builder.expectStatusCode(200);
+        builder.expectBody("x.y.size()", is(2));
+        ResponseSpecification responseSpec = builder.build();
+
+        // Now you can re-use the "responseSpec" in many different tests:
+
+        RestAssured.when().
+                get("/something").
+                then().
+                spec(responseSpec).
+                body("x.y.z", equalTo("something"));
     }
 }

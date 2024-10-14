@@ -68,5 +68,8 @@ public class RestAssuredGlobalDecelerations {
         // To define RestAssured config globally use the below static variable.
         RestAssured.config = RestAssured.config().logConfig(LogConfig.logConfig().blacklistDefaultSensitiveHeaders())
                 .sslConfig(SSLConfig.sslConfig().allowAllHostnames());
+
+        // There's also a shortcut for enabling logging of the request and response for all requests if validation fails
+        RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
     }
 }
