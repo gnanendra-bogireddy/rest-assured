@@ -1,69 +1,55 @@
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
-import model.DataModel;
-import model.ResponseModel;
+import org.testng.annotations.Test;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.hamcrest.Matchers.*;
+
+/**
+ * REST Assured SME Recap: Serialization & Deserialization
+ * 
+ * Key Interview Points:
+ * 1. Serialization: Converting Java Object (POJO/Map) -> JSON/XML.
+ * 2. Deserialization: Converting JSON/XML -> Java Object.
+ * 3. Default behavior: Rest Assured automatically serializes if Jackson/Gson is in classpath 
+ *    and Content-Type is set.
+ * 4. as() method: Used for deserialization (e.g., response.as(User.class)).
+ */
 public class SerializationDemo {
-    // REST Assured supports mapping Java objects to and from JSON and XML.
-    // For JSON you need to have either Jackson, Jackson2, Gson or Johnzon in the classpath
-    // and for XML you need Jakarta EE or JAXB.
 
-//    In this example REST Assured will serialize the object to JSON since the request content-type
-//    is set to "application/json". It will first try to use Jackson if found in classpath
-//    and if not Gson will be used. If you change the content-type to "application/xml"
-//    REST Assured will serialize to XML using JAXB. If no content-type is defined REST Assured will
-//    try to serialize in the following order:
+    @Test(description = "Serialization using Map")
+    public void testMapSerialization() {
+        Map<String, Object> body = new HashMap<>();
+        body.put("name", "Apple MacBook Pro 16");
+        
+        Map<String, Object> data = new HashMap<>();
+        data.put("year", 2019);
+        data.put("price", 1849.99);
+        body.put("data", data);
 
-//    JSON using Jackson 2 (Faster Jackson (databind))
-//    JSON using Jackson (databind)
-//    JSON using Gson
-//    JSON using Johnzon
-//    JSON-B using Eclipse Yasson
-//    XML using Jakarta EE
-//    XML using JAXB
-//    REST Assured also respects the charset of the content-type. E.g.
-//
-//    Message message = new Message();
-//    message.setMessage("My messagee");
-//    given().
-//    contentType("application/json; charset=UTF-16").
-//    body(message).
-//    when().
-//    post("/message");
-
-//    Create JSON from a HashMap
-//    You can also create a JSON document by supplying a Map to REST Assured.
-//
-//    Map<String, Object>  jsonAsMap = new HashMap<>();
-//    jsonAsMap.put("firstName", "John");
-//    jsonAsMap.put("lastName", "Doe");
-//    given().
-//    contentType(JSON).
-//    body(jsonAsMap).
-//    when().
-//    post("/somewhere").
-//    then().
-//    statusCode(200);
-//    This will provide a JSON payload as:
-//
-//    { "firstName" : "John", "lastName" : "Doe" }
-    public static void main(String[] args) {
-
-        ResponseModel responseModel = new ResponseModel();
-        responseModel.name = "Apple MacBook Pro 16";
-        DataModel dataModel = new DataModel();
-        dataModel.year = 2019;
-        dataModel.price = 1849.99;
-        dataModel.CPUModel = "Intel Core i9";
-        dataModel.size = "1 TB";
-        responseModel.data = dataModel;
-
-        RestAssured.baseURI = "https://api.restful-api.dev";
-        RestAssured.basePath = "/objects";
-
-        RestAssured.given().log().all()
-                .auth().none().body(responseModel)
+        RestAssured.given()
                 .contentType(ContentType.JSON)
-                .post().then().log().all();
+                .body(body)
+                .when()
+                .post("https://api.restful-api.dev/objects")
+                .then()
+                .statusCode(200)
+                .body("name", equalTo("Apple MacBook Pro 16"));
+    }
+
+    /**
+     * Interview Tip: How do you extract the response back into a POJO?
+     */
+    @Test(description = "Deserialization using .as() method")
+    public void testDeserialization() {
+        // String responseBody = get("/objects/1").asString(); // Not SME way
+        
+        // The SME Way:
+        // ResponseModel model = get("/objects/1").as(ResponseModel.class);
+        // System.out.println(model.getName());
+        
+        System.out.println("SME Tip: Use .as(Class) for full object mapping or .jsonPath().getObject(path, Class) for partial mapping.");
     }
 }

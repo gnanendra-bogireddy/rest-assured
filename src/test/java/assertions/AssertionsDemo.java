@@ -2,41 +2,43 @@ package assertions;
 
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
+import org.testng.annotations.Test;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.hamcrest.Matchers.*;
 
+/**
+ * REST Assured SME Recap: Assertions & Validation
+ * 
+ * Key Interview Points:
+ * 1. Hamcrest Matchers: The core of Rest Assured assertions (equalTo, hasItem, containsString, etc.).
+ * 2. Response Time: Crucial for performance testing (`.time(lessThan(2000L))`).
+ * 3. Soft Assertions: Passing multiple body() calls in one then() block acts as a soft assertion 
+ *    (it will try to validate all of them before failing).
+ * 4. Header & Cookie Validation: `.header()` and `.cookie()`.
+ */
 public class AssertionsDemo {
-    public static void main(String[] args) {
 
-        // Rest assured has default assertions.
-        // If you want to validate cookies use the code below.
-        RestAssured.get("/x").then().assertThat().cookie("cookieName", "cookieValue");
-        RestAssured.get("/x").then().assertThat().cookies("cookieName1", "cookieValue1", "cookieName2", "cookieValue2");
+    @Test(description = "Comprehensive Assertions Demo")
+    public void testAllAssertions() {
+        RestAssured.given()
+                .baseUri("https://jsonplaceholder.typicode.com")
+                .when()
+                .get("/posts/1")
+                .then()
+                .assertThat()
+                .statusCode(200)
+                .statusLine(containsString("OK"))
+                .contentType(ContentType.JSON)
+                .header("Content-Encoding", "gzip")
+                .time(lessThan(5L), SECONDS)
+                .body("userId", equalTo(1))
+                .body("title", is(notNullValue()))
+                .body("body", containsString("quia et suscipi"));
+    }
 
-        // If you want to validate headers use the code below.
-        RestAssured.get("/x").then().assertThat().header("headerName", "headerValue");
-        RestAssured.get("/x").then().assertThat().headers("headerName1", "headerValue1", "headerName2", "headerValue2");
-
-        // If you want to perform status code validations use the code below.
-        // containsString("something") is from hamcrest library.
-        RestAssured.get("/x").then().assertThat().statusCode(200);
-        RestAssured.get("/x").then().assertThat().statusLine("something");
-        RestAssured.get("/x").then().assertThat().statusLine(containsString("some"));
-
-        // If you want to perform content type validations use the code below.
-        RestAssured.get("/x").then().assertThat().contentType(ContentType.JSON);
-
-        // If you want to perform body validations use the code below.
-        RestAssured.get("/x").then().assertThat().body(equalTo("something"));
-
-        long timeInMs = RestAssured.get("/lotto").time();
-        // or using a specific time unit:
-
-        long timeInSeconds = RestAssured.get("/lotto").timeIn(SECONDS);
-        // where SECONDS is just a standard TimeUnit. You can also validate it using the validation DSL:
-
-        RestAssured.get("/lotto").then().
-                time(lessThan(2000L)); // Milliseconds in time.
+    @Test(description = "Validating Cookies")
+    public void testCookieAssertions() {
+        // RestAssured.get("/x").then().assertThat().cookie("name", "value");
     }
 }

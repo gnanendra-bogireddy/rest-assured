@@ -10,6 +10,7 @@ public class ProxyandEncodingDemo {
         RestAssured.proxy("localhost", 8080, "https");
         RestAssured.given().proxy(8888); // Will assume localhost
 
+
         // Proxy with auth method is given below.
         RestAssured.given().proxy(new ProxySpecification("localhost", 8080, "https")
                 .withAuth("username", "password")).get("/path").then().log().all();

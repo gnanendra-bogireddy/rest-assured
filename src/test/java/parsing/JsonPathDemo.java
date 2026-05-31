@@ -37,7 +37,7 @@ public class JsonPathDemo {
                 .get("/objects").then()
                 .log().all().extract().response();
 
-        List<ResponseModel> list = jsonPathResponse.jsonPath().getList("$", ResponseModel.class);
+        List<ResponseModel> list = jsonPathResponse.body().jsonPath().getList("$", ResponseModel.class);
         System.out.println("Printing Third element in Response " + list.get(2).getName());
         System.out.println("Printing Third element Color " + list.get(2).getData().getColor());
         System.out.println("Printing Third element Capacity " + list.get(2).getData().getCapacity());

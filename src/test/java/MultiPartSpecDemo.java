@@ -1,38 +1,34 @@
 import io.restassured.RestAssured;
 import io.restassured.builder.MultiPartSpecBuilder;
 import io.restassured.http.ContentType;
+import org.testng.annotations.Test;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
 
+/**
+ * REST Assured SME Recap: Multi-part Requests (File Upload)
+ * 
+ * Key Interview Points:
+ * 1. Multi-part: Used for uploading files along with other form data.
+ * 2. Control Name: The field name expected by the server (e.g., "file", "image").
+ * 3. MIME Type: Should match the file type (e.g., "image/jpeg", "application/pdf").
+ */
 public class MultiPartSpecDemo {
-    public static void main(String[] args) {
-        // This is a API from Rapid API playground for OCR API. "https://rapidapi.com/api4ai-api4ai-default/api/ocr43"
-        // URI = "https://ocr43.p.rapidapi.com/v1/results"
-        // Custom-Headers - "x-rapidapi-key"="6ff0f5da7amshdf1cf71fc400f2ep1e008ajsn6d5f22516f7f"
-        // Custom-Headers - "x-rapidapi-ua"="RapidAPI-Playground"
-        // Custom-Headers - "x-rapidapi-host"="ocr43.p.rapidapi.com"
 
-        RestAssured.baseURI = "https://ocr43.p.rapidapi.com";
-        RestAssured.basePath = "/v1/results";
+    @Test(description = "Demonstrating file upload using multiPart")
+    public void testFileUpload() {
+        // MultiPartSpecBuilder is useful for complex multi-part requests
+        // File file = new File("path/to/file.jpg");
 
-        MultiPartSpecBuilder multiPartSpecBuilder = new MultiPartSpecBuilder(new File("src/test/resources/sample.jpg"));
-        multiPartSpecBuilder.fileName("sample.jpg");
-        multiPartSpecBuilder.mimeType("image/jpeg");
-        multiPartSpecBuilder.controlName("image");
-        multiPartSpecBuilder.build();
-
-        Map<String, String> headers = new HashMap<>();
-        headers.put("x-rapidapi-ua","RapidAPI-Playground");
-        headers.put("x-rapidapi-key","6ff0f5da7amshdf1cf71fc400f2ep1e008ajsn6d5f22516f7f");
-        headers.put("x-rapidapi-host","ocr43.p.rapidapi.com");
-        RestAssured.given().log().all()
-                .queryParam("algo","simple-words")
+        RestAssured.given()
+                .baseUri("https://httpbin.org")
                 .contentType(ContentType.MULTIPART)
-                .headers(headers)
-                .multiPart(multiPartSpecBuilder.build())
-                .post().then().log().all();
-
+                // Simplest way:
+                // .multiPart("file", file, "image/jpeg")
+                .when()
+                .post("/post")
+                .then()
+                .statusCode(200)
+                .log().all();
     }
 }

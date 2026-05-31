@@ -1,30 +1,74 @@
 package http;
 
 import io.restassured.RestAssured;
-import io.restassured.http.Method;
+import io.restassured.http.ContentType;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
 
+import static org.hamcrest.Matchers.*;
+
+/**
+ * REST Assured SME Recap: GET Requests
+ * 
+ * Key Interview Points:
+ * 1. Given-When-Then: The BDD style syntax (Gherkin-like).
+ * 2. Path Parameters vs Query Parameters: 
+ *    - Path params: part of the URL path (/{id}).
+ *    - Query params: after the '?' (?id=1).
+ * 3. Log().all(): Essential for debugging.
+ * 4. Hamcrest Matchers: Used in .then().body() for assertions.
+ */
 public class GetRequestDemo {
-    public static void main(String[] args) {
+
+    @BeforeClass
+    public void setup() {
         RestAssured.baseURI = "https://jsonplaceholder.typicode.com";
+    }
 
-        RestAssured.given().log().all()
-                .auth().none()
-                .request(Method.GET, "/posts")
-                .then().log().all();
+    @Test(description = "Basic GET request with logging")
+    public void testBasicGet() {
+        RestAssured.given()
+                .log().all() // Log request details
+                .when()
+                .get("/posts")
+                .then()
+                .log().ifError() // Log response only if error occurs
+                .statusCode(200)
+                .contentType(ContentType.JSON);
+    }
 
-        RestAssured.given().log().all()
-                .auth().none()
-                .get("/posts/1").then().log().all();
+    @Test(description = "GET request with Path Parameter")
+    public void testWithPathParam() {
+        RestAssured.given()
+                .pathParam("postId", 1)
+                .when()
+                .get("/posts/{postId}")
+                .then()
+                .statusCode(200)
+                .body("id", equalTo(1))
+                .body("title", notNullValue());
+    }
 
-        RestAssured.given().log().all()
-                .auth().none()
-                .pathParam("id", "1")
+    @Test(description = "GET request with Query Parameter")
+    public void testWithQueryParam() {
+        RestAssured.given()
+                .queryParam("userId", 1)
+                .when()
+                .get("/posts")
+                .then()
+                .statusCode(200)
+                .body("size()", greaterThan(0)) // Validate list size
+                .body("[0].userId", equalTo(1)); // Validate first element in list
+    }
+
+    @Test(description = "Complex Path Parameter example")
+    public void testNestedResource() {
+        RestAssured.given()
+                .pathParam("id", 1)
+                .when()
                 .get("/posts/{id}/comments")
-                .then().log().all();
-
-        RestAssured.given().log().all()
-                .auth().none()
-                .queryParam("postId", "1")
-                .get("/comments").then().log().all();
+                .then()
+                .statusCode(200)
+                .body("postId", everyItem(equalTo(1))); // Groovy matcher everyItem
     }
 }
