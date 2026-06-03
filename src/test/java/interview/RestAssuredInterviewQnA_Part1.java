@@ -1,4 +1,4 @@
-package model;
+package interview;
 
 /**
  * REST Assured SME Interview Q&A - Part 1 (Questions 1-30)

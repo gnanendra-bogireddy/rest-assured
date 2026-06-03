@@ -1,6 +1,5 @@
-package model;
+package interview;
 
-import io.restassured.RestAssured;
 import org.testng.annotations.Test;
 
 /**
