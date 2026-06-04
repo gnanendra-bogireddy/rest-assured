@@ -8,9 +8,16 @@ import parsing.model.ResponseModel;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * JsonPath (bundled with REST Assured) — query JSON without full POJO mapping.
+ * <p>
+ * Prefer {@code response.jsonPath()} after {@code extract().response()} for reuse across assertions.
+ * {@code $} root prefix is optional in recent versions.
+ * <p>
+ * Methods: {@code get}, {@code getString}, {@code getInt}, {@code getList}, {@code getObject(path, Class)}.
+ */
 public class JsonPathDemo {
-    // The usage of "$" node is optional in latest versions of Rest assured.
-    // JsonPath is bundled with Rest Assured. It is recommended to use after storing Response in a object.
+
     public static void main(String[] args) {
 
         RestAssured.baseURI = "https://petstore.swagger.io";

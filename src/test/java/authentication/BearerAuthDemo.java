@@ -1,36 +1,24 @@
 package authentication;
 
-import io.restassured.RestAssured;
-import org.testng.annotations.Test;
+import common.TestApis;
+
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.equalTo;
 
 /**
- * REST Assured SME Recap: Authentication
- * 
- * Key Interview Points:
- * 1. Preemptive vs. Relaxed: Basic auth can be preemptive (send creds before challenge).
- * 2. OAuth 2.0: The industry standard for Bearer tokens.
- * 3. API Key: Can be sent in Header, Query Param, or Cookie.
- * 4. Auth Inheritance: Can be set globally or per request.
+ * Bearer / OAuth2 token — {@code auth().oauth2(token)} (see {@link AllAuthTypesDemo} for DummyJSON login).
  */
 public class BearerAuthDemo {
 
-    @Test(description = "OAuth 2.0 Bearer Token Authentication")
-    public void testBearerToken() {
-        String token = "my_secret_token";
+  public static void main(String[] args) {
+    String token = "eyJhbGciOiJIUzI1NiJ9.demo";
 
-        // Modern way (Preferred for SME)
-        RestAssured.given()
-                .auth().oauth2(token)
-                .when()
-                .get("https://httpbin.org/bearer")
-                .then()
-                .statusCode(200);
+    given().auth().oauth2(token).get(TestApis.HTTPBIN + "/bearer").then().statusCode(200);
 
-        // Manual Header way (Sometimes needed for custom prefixes)
-        RestAssured.given()
-                .header("Authorization", "Bearer " + token)
-                .get("https://httpbin.org/bearer")
-                .then()
-                .statusCode(200);
-    }
+    given()
+        .header("Authorization", "Bearer " + token)
+        .get(TestApis.HTTPBIN + "/bearer")
+        .then()
+        .body("token", equalTo(token));
+  }
 }

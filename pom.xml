@@ -13,6 +13,7 @@
         <rest.assured.version>5.5.0</rest.assured.version>
         <testng.version>7.10.2</testng.version>
         <jackson.version>2.18.0</jackson.version>
+        <exec.mainClass>snippets.FeatureSnippetsRunner</exec.mainClass>
     </properties>
 
     <dependencies>
@@ -83,6 +84,20 @@
                     <source>${java.version}</source>
                     <target>${java.version}</target>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.5.0</version>
+                <configuration>
+                    <mainClass>${exec.mainClass}</mainClass>
+                    <classpathScope>test</classpathScope>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.5.2</version>
             </plugin>
         </plugins>
     </build>

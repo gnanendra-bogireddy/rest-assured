@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "required": ["id", "title", "description", "price"],
+  "properties": {
+    "id": { "type": "integer" },
+    "title": { "type": "string" },
+    "description": { "type": "string" },
+    "price": { "type": "number" },
+    "discountPercentage": { "type": "number" },
+    "rating": { "type": "number" },
+    "stock": { "type": "integer" },
+    "brand": { "type": "string" },
+    "category": { "type": "string" }
+  }
+}

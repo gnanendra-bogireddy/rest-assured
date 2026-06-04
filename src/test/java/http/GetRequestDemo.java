@@ -5,6 +5,8 @@ import io.restassured.http.ContentType;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import java.util.Map;
+
 import static org.hamcrest.Matchers.*;
 
 /**
@@ -70,5 +72,30 @@ public class GetRequestDemo {
                 .then()
                 .statusCode(200)
                 .body("postId", everyItem(equalTo(1))); // Groovy matcher everyItem
+    }
+
+    @Test(description = "Query map, accept header, and _limit")
+    public void testQueryMapAndAccept() {
+        RestAssured.given()
+                .accept(ContentType.JSON)
+                .queryParams(Map.of("_limit", "5"))
+                .when()
+                .get("/posts")
+                .then()
+                .statusCode(200)
+                .body("size()", equalTo(5));
+    }
+
+    /** Runnable without TestNG — use for quick IDE execution. */
+    public static void main(String[] args) {
+        GetRequestDemo demo = new GetRequestDemo();
+        demo.setup();
+        demo.testBasicGet();
+        demo.testWithPathParam();
+        demo.testWithQueryParam();
+        demo.testNestedResource();
+        demo.testQueryMapAndAccept();
+        RestAssured.reset();
+        System.out.println("GetRequestDemo — all examples passed.");
     }
 }

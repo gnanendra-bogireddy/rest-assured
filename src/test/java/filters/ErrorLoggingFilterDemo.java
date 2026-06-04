@@ -1,20 +1,23 @@
 package filters;
 
-import io.restassured.RestAssured;
-import io.restassured.filter.Filter;
+import common.TestApis;
 import io.restassured.filter.log.ErrorLoggingFilter;
 
-public class ErrorLoggingFilterDemo {
-    // ErrorLoggingFilter is a class which extends StatusCodeBasedLoggingFilter which internally uses
-    // Filter interface.- Filter interface has only one method filter and its return Response.
-    // This will print response in console if any error occurs.
-    public static void main(String[] args) {
-        Filter filter = new ErrorLoggingFilter();
+import static io.restassured.RestAssured.given;
 
-        RestAssured.baseURI = "https://httpbin.org";
-        RestAssured.given()
-                .filter(filter)
-                .auth().none().pathParam("codes", 400)
-                .get("/status/{codes}");
-    }
+/**
+ * ErrorLoggingFilter — logs response when status is 4xx/5xx (extends StatusCodeBasedLoggingFilter).
+ */
+public class ErrorLoggingFilterDemo {
+
+  public static void main(String[] args) {
+    given()
+        .baseUri(TestApis.HTTPBIN)
+        .filter(new ErrorLoggingFilter())
+        .get("/status/500")
+        .then()
+        .statusCode(500);
+
+    System.out.println("ErrorLoggingFilterDemo — check console for error log output.");
+  }
 }

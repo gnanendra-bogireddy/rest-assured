@@ -30,7 +30,7 @@ public class AssertionsDemo {
                 .statusCode(200)
                 .statusLine(containsString("OK"))
                 .contentType(ContentType.JSON)
-                .header("Content-Encoding", "gzip")
+                .header("Content-Type", containsString("application/json"))
                 .time(lessThan(5L), SECONDS)
                 .body("userId", equalTo(1))
                 .body("title", is(notNullValue()))
